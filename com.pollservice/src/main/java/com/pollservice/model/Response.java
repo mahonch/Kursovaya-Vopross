@@ -1,22 +1,24 @@
 package com.pollservice.model;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
-public class Poll {
+public class Response {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String youtubeVideoId;  // Для интеграции с YouTube
+    @ManyToOne
+    private User user;
 
     @ManyToOne
-    private User author;
-
-    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
-    private List<Question> questions;
+    private Answer answer;
 
     // Геттеры и сеттеры
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    public Answer getAnswer() { return answer; }
+    public void setAnswer(Answer answer) { this.answer = answer; }
 }
