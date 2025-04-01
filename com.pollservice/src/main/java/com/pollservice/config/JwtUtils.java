@@ -17,6 +17,27 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int expiration;
 
+    @Value("${jwt.refreshExpiration}")
+    private int refreshExpiration;
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration * 1000L))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()

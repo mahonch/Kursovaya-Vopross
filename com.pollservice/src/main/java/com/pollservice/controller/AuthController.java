@@ -2,6 +2,7 @@ package com.pollservice.controller;
 
 import com.pollservice.config.JwtUtils;
 import com.pollservice.model.User;
+import com.pollservice.service.RefreshTokenService;
 import com.pollservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,5 +43,22 @@ public class AuthController {
             return ResponseEntity.ok(jwtUtils.generateToken(userDetails));
         }
         return ResponseEntity.status(401).body("Invalid credentials");
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String newToken = jwtUtils.generateToken(user);
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+                    return ResponseEntity.ok(new TokenResponse(
+                            newToken,
+                            newRefreshToken.getToken()
+                    ));
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
     }
 }
