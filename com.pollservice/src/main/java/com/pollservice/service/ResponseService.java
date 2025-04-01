@@ -1,10 +1,12 @@
 package com.pollservice.service;
 
-import com.pollservice.model.*;
+import com.pollservice.model.Answer;
+import com.pollservice.model.Response;
+import com.pollservice.model.User;
 import com.pollservice.repository.ResponseRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
