@@ -20,4 +20,20 @@ public class RefreshToken {
 
     @Column(nullable = false)
     private Instant expiryDate;
+
+    public void setUser(User user) {
+    }
+
+    public Comparable<Instant> getExpiryDate() {
+        return null;
+    }
+
+    public void setToken(String toString) {
+    }
+
+    public void setExpiryDate(Instant plusMillis) {
+    }
+    public User getUser() {
+        return this.user;
+    }
 }
