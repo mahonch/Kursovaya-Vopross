@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Только для админов
                         .requestMatchers("/api/youtube/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(

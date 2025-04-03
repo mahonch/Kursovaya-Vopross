@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:./poll.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update # Уже есть, оставляем
+  sql:
+    init:
+      mode: always
+  jackson:
+    time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+
+jwt:
+  secret: your-256-bit-secret
+  expiration: 900 # 15 minutes
+  refreshExpiration: 86400 # 24 hours
