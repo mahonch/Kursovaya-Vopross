@@ -1,5 +1,6 @@
 package com.pollservice.service;
 
+import com.pollservice.dto.UserRegistrationDto;
 import com.pollservice.model.User;
 import com.pollservice.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -18,10 +20,17 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public void createUser(UserRegistrationDto registrationDto) {
+        if (registrationDto.getPassword() == null || registrationDto.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
 
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User user = new User();
+        user.setUsername(registrationDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        user.setRole(registrationDto.getRole()); // Устанавливаем роль из DTO
+
+        userRepository.save(user);
     }
 
     @Override

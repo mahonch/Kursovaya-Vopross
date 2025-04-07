@@ -2,22 +2,47 @@ spring:
   datasource:
     url: jdbc:sqlite:./poll.db
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+  mvc:
+    throw-exception-if-no-handler-found: true
+    static-path-pattern: /**
+  web:
+    resources:
+      add-mappings: false
+      static-locations: classpath:/static/
+      cache:
+        period: 0
   jpa:
-    show-sql: true
+    show-sql:   true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
-    hibernate:
-      ddl-auto: update # Уже есть, оставляем
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+  logging:
+    level:
+      org:
+        springframework:
+          jdbc:
+            datasource:
+              init: DEBUG  # Включить логирование инициализации БД
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql:
+                BasicBinder: TRACE
   sql:
     init:
       mode: always
+      continue-on-error: true
   jackson:
     time-zone: UTC
     serialization:
       write-dates-as-timestamps: false
 
 jwt:
-  secret: your-256-bit-secret
-  expiration: 900 # 15 minutes
-  refreshExpiration: 86400 # 24 hours
+  secret: zPdSgVkYp3s6v9y$B&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(
+  expiration: 900
+  refreshExpiration: 86400

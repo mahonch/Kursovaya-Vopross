@@ -3,18 +3,20 @@ package com.pollservice.controller;
 import com.pollservice.config.JwtUtils;
 import com.pollservice.dto.RefreshTokenRequest;
 import com.pollservice.dto.TokenResponse;
+import com.pollservice.dto.UserRegistrationDto;
 import com.pollservice.model.RefreshToken;
 import com.pollservice.model.User;
 import com.pollservice.service.RefreshTokenService;
 import com.pollservice.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @RestController
@@ -37,13 +39,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        if (userService.isUsernameAvailable(user.getUsername())) {
-            userService.createUser(user);
-            return ResponseEntity.ok("User registered");
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegistrationDto registrationDto) {
+        if (userService.isUsernameAvailable(registrationDto.getUsername())) {
+            userService.createUser(registrationDto);
+            return ResponseEntity.ok("User registered successfully");
         }
-        return ResponseEntity.badRequest().body("Username taken");
+        return ResponseEntity.badRequest().body("Username is already taken");
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {

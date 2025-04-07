@@ -3,7 +3,7 @@ package com.pollservice.model;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {
-    GUEST, MODERATOR, ADMIN;
+    GUEST, MODERATOR, ADMIN, USER;
 
     @Override
     public String getAuthority() {

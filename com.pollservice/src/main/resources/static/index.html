@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll Service Auth</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/auth.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="auth-forms">
+        <!-- Форма регистрации -->
+        <div class="form-container" id="register-form">
+            <h2>Регистрация</h2>
+            <form id="register">
+                <input type="text" id="reg-username" placeholder="Имя пользователя" required>
+                <input type="password" id="reg-password" placeholder="Пароль" required>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <p>Уже есть аккаунт? <a href="#" onclick="showLogin()">Войти</a></p>
+        </div>
+
+        <!-- Форма входа -->
+        <div class="form-container" id="login-form" style="display: none;">
+            <h2>Вход</h2>
+            <form id="login">
+                <input type="text" id="login-username" placeholder="Имя пользователя" required>
+                <input type="password" id="login-password" placeholder="Пароль" required>
+                <button type="submit">Войти</button>
+            </form>
+            <p>Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a></p>
+        </div>
+    </div>
+
+    <div class="auth-actions" id="auth-actions" style="display: none;">
+        <button onclick="logout()">Выйти</button>
+        <div id="token-info"></div>
+    </div>
+</div>
+
+<script src="/js/auth.js"></script>
+</body>
+</html>

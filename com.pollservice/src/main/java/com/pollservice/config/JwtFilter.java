@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class JwtFilter extends OncePerRequestFilter {
+
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
@@ -25,10 +26,10 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain chain)
+                                    FilterChain filterChain)
             throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
 
+        final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
 
@@ -39,15 +40,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userService.loadUserByUsername(username);
-            if (jwtUtils.validateToken(jwt, userDetails)) {
+
+            if (jwtUtils.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }
