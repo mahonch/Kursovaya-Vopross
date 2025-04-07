@@ -5,11 +5,13 @@ spring:
     hikari:
       maximum-pool-size: 1
   mvc:
-    throw-exception-if-no-handler-found: true
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    throw-exception-if-no-handler-found: false
     static-path-pattern: /**
   web:
     resources:
-      add-mappings: false
+      add-mappings: true
       static-locations: classpath:/static/
       cache:
         period: 0
@@ -24,6 +26,8 @@ spring:
     level:
       org:
         springframework:
+          security: DEBUG
+          web: DEBUG
           jdbc:
             datasource:
               init: DEBUG  # Включить логирование инициализации БД

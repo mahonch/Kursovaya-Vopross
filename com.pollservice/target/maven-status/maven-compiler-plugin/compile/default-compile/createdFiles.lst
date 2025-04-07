@@ -10,11 +10,11 @@ com\pollservice\repository\PollRepository.class
 com\pollservice\config\JwtFilter.class
 com\pollservice\controller\YouTubeController.class
 com\pollservice\repository\AnswerRepository.class
+com\pollservice\controller\SpaForwardingController.class
 com\pollservice\controller\PollController.class
 com\pollservice\config\AuthBeansConfig.class
 com\pollservice\controller\ResponseController.class
 com\pollservice\service\PollService.class
-com\pollservice\controller\WebController.class
 com\pollservice\dto\UserRegistrationDto.class
 com\pollservice\model\RefreshToken.class
 com\pollservice\model\Answer.class
