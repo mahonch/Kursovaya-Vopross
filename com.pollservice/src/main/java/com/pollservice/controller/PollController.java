@@ -1,5 +1,6 @@
 package com.pollservice.controller;
 
+import com.pollservice.dto.CreatePollDto;
 import com.pollservice.model.Poll;
 import com.pollservice.model.User;
 import com.pollservice.service.PollService;
@@ -17,15 +18,10 @@ public class PollController {
         this.pollService = pollService;
     }
 
-    @GetMapping
-    public List<Poll> getAllPolls(@AuthenticationPrincipal User user) {
-        return pollService.getPollsByAuthor(user);
-    }
-
     @PostMapping
-    public Poll createPoll(@RequestBody Poll poll,
+    public Poll createPoll(@RequestBody CreatePollDto pollDto,
                            @AuthenticationPrincipal User author) {
-        return pollService.createPoll(poll, author);
+        return pollService.createPollWithQuestions(pollDto, author);
     }
 
     @GetMapping("/with-youtube")

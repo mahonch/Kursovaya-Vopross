@@ -1,8 +1,13 @@
 package com.pollservice.service;
 
+import com.pollservice.dto.CreatePollDto;
+import com.pollservice.model.Answer;
 import com.pollservice.model.Poll;
+import com.pollservice.model.Question;
 import com.pollservice.model.User;
+import com.pollservice.repository.AnswerRepository;
 import com.pollservice.repository.PollRepository;
+import com.pollservice.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,20 +17,51 @@ import java.util.List;
 public class PollService {
     private final PollRepository pollRepository;
     private final YouTubeService youTubeService;
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
-    public PollService(PollRepository pollRepository, YouTubeService youTubeService) {
+    public PollService(PollRepository pollRepository,
+                       YouTubeService youTubeService,
+                       QuestionRepository questionRepository,
+                       AnswerRepository answerRepository) {
         this.pollRepository = pollRepository;
         this.youTubeService = youTubeService;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @Transactional
-    public Poll createPoll(Poll poll, User author) {
+    public Poll createPollWithQuestions(CreatePollDto pollDto, User author) {
+        // Создаем основной опрос
+        Poll poll = new Poll();
+        poll.setTitle(pollDto.getTitle());
+        poll.setQuestionCount(pollDto.getQuestionCount());
         poll.setAuthor(author);
-        if (poll.getYoutubeVideoId() != null) {
-            String videoId = youTubeService.extractVideoId(poll.getYoutubeVideoId());
+
+        // Извлекаем ID видео
+        if (pollDto.getYoutubeUrl() != null) {
+            String videoId = youTubeService.extractVideoId(pollDto.getYoutubeUrl());
             poll.setYoutubeVideoId(videoId);
         }
-        return pollRepository.save(poll);
+
+        poll = pollRepository.save(poll);
+
+        // Добавляем вопросы и ответы
+        for (CreatePollDto.QuestionDto questionDto : pollDto.getQuestions()) {
+            Question question = new Question();
+            question.setText(questionDto.getText());
+            question.setPoll(poll);
+            question = questionRepository.save(question);
+
+            for (String answerText : questionDto.getAnswers()) {
+                Answer answer = new Answer();
+                answer.setText(answerText);
+                answer.setQuestion(question);
+                answerRepository.save(answer);
+            }
+        }
+
+        return poll;
     }
 
     public List<Poll> getPollsByAuthor(User author) {

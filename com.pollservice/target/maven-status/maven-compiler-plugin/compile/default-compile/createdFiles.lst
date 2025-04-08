@@ -1,6 +1,7 @@
 com\pollservice\config\SecurityConfig.class
 com\pollservice\repository\ResponseRepository.class
 com\pollservice\config\JwtUtils.class
+com\pollservice\controller\RootController.class
 com\pollservice\model\Question.class
 com\pollservice\model\Response.class
 com\pollservice\model\User.class
@@ -9,10 +10,12 @@ com\pollservice\config\SQLiteConfig.class
 com\pollservice\repository\PollRepository.class
 com\pollservice\config\JwtFilter.class
 com\pollservice\controller\YouTubeController.class
+com\pollservice\dto\CreatePollDto$QuestionDto.class
 com\pollservice\repository\AnswerRepository.class
 com\pollservice\controller\SpaForwardingController.class
 com\pollservice\controller\PollController.class
 com\pollservice\config\AuthBeansConfig.class
+com\pollservice\dto\CreatePollDto.class
 com\pollservice\controller\ResponseController.class
 com\pollservice\service\PollService.class
 com\pollservice\dto\UserRegistrationDto.class
@@ -27,7 +30,6 @@ com\pollservice\service\UserService.class
 com\pollservice\repository\UserRepository.class
 com\pollservice\service\YouTubeService.class
 com\pollservice\model\Role.class
-com\pollservice\config\SecurityConfig$1.class
 com\pollservice\model\Poll.class
 com\pollservice\service\ResponseService.class
 com\pollservice\controller\AuthController.class

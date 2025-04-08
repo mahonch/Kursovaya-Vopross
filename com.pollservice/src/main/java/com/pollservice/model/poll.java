@@ -12,6 +12,7 @@ public class Poll {
 
     private String title;
     private String youtubeVideoId;
+    private int questionCount; // Новое поле
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -19,6 +20,10 @@ public class Poll {
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
     private List<Question> questions;
+
+    // Геттеры и сеттеры
+    public int getQuestionCount() { return questionCount; }
+    public void setQuestionCount(int questionCount) { this.questionCount = questionCount; }
 
     // Геттеры и сеттеры
     public Long getId() { return id; }

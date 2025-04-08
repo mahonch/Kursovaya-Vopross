@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная | Poll Service</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">Poll Service</div>
+    <nav>
+        <a href="/main.html" class="active">Главная</a>
+        <a href="/profile.html">Профиль</a>
+        <button class="logout-btn" onclick="logout()">Выйти</button>
+    </nav>
+</header>
+
+<main class="main-content">
+    <div class="welcome-message">
+        <h1>Добро пожаловать, <span id="username-display"></span>!</h1>
+        <p>Выберите действие или создайте новый опрос</p>
+    </div>
+
+    <div class="poll-creation-section">
+        <h2>Создать новый опрос по видео</h2>
+        <div class="poll-form">
+            <div class="form-group">
+                <label for="poll-title">Название опроса</label>
+                <input type="text" id="poll-title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="youtube-url">Ссылка на YouTube видео</label>
+                <input type="text" id="youtube-url" required>
+            </div>
+
+            <div id="questions-container">
+                <div class="question-block">
+                    <h3>Вопрос 1</h3>
+                    <input type="text" class="question-text" placeholder="Текст вопроса" required>
+                    <div class="answers-container">
+                        <input type="text" class="answer-text" placeholder="Вариант ответа" required>
+                    </div>
+                    <button type="button" class="add-answer-btn" onclick="addAnswer(this)">+ Добавить вариант</button>
+                </div>
+            </div>
+
+            <button type="button" class="add-question-btn" onclick="addQuestion()">+ Добавить вопрос</button>
+            <button type="button" class="submit-btn" onclick="createPoll()">Создать опрос</button>
+        </div>
+    </div>
+
+    <section class="polls-section">
+        <h2>Доступные опросы</h2>
+        <div id="polls-container" class="polls-grid">
+            <!-- Опросы будут загружаться здесь -->
+        </div>
+    </section>
+</main>
+
+<script src="/js/auth.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

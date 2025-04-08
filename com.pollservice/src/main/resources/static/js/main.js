@@ -1,112 +1,100 @@
-const API_BASE_URL = 'http://localhost:8080/api/auth';
-
-// Проверка авторизации при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
-    if (token) {
-        // Если пользователь уже авторизован, перенаправляем на главную
-        redirectToMain();
+
+    // Если нет токена - перенаправляем на страницу входа
+    if (!token) {
+        window.location.href = '/auth.html';
+        return;
     }
+
+    // Загружаем данные пользователя
+    loadUserProfile();
+
+    // Загружаем опросы
+    loadPolls();
 });
 
-function showTab(tabName) {
-    document.querySelectorAll('.auth-form').forEach(form => {
-        form.style.display = 'none';
-    });
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    document.getElementById(`${tabName}-form`).style.display = 'block';
-    document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
-}
-
-// Обработка регистрации
-document.getElementById('register').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    showLoading();
-
-    const username = document.getElementById('reg-username').value;
-    const password = document.getElementById('reg-password').value;
-
+async function loadUserProfile() {
     try {
-        const response = await fetch(`${API_BASE_URL}/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+        const token = localStorage.getItem('jwtToken');
+        const response = await fetch('/api/user/profile', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (response.ok) {
-            alert('Регистрация прошла успешно! Теперь вы можете войти.');
-            showTab('login');
-        } else {
-            showError(await response.text());
+            const userData = await response.json();
+            document.getElementById('username-display').textContent = userData.username;
         }
     } catch (error) {
-        showError('Ошибка соединения с сервером');
-    } finally {
-        hideLoading();
+        console.error('Ошибка загрузки профиля:', error);
     }
-});
+}
 
-// Обработка входа
-document.getElementById('login').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    showLoading();
-
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+async function loadPolls() {
+    const container = document.getElementById('polls-container');
+    container.innerHTML = '<div class="loading">Загрузка опросов...</div>';
 
     try {
-        const response = await fetch(`${API_BASE_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+        const token = localStorage.getItem('jwtToken');
+        const response = await fetch('/api/polls', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
 
-        if (response.ok) {
-            const token = await response.text();
-            localStorage.setItem('jwtToken', token);
-            redirectToMain();
-        } else {
-            showError(await response.text());
-        }
+        if (!response.ok) throw new Error('Ошибка загрузки опросов');
+
+        const polls = await response.json();
+        displayPolls(polls);
     } catch (error) {
-        showError('Ошибка соединения с сервером');
-    } finally {
-        hideLoading();
+        console.error('Ошибка:', error);
+        container.innerHTML = '<div class="error">Не удалось загрузить опросы</div>';
     }
-});
-
-// Перенаправление на главную страницу
-function redirectToMain() {
-    document.getElementById('auth-loading').style.display = 'block';
-    setTimeout(() => {
-        window.location.href = '/main.html'; // Или '/', в зависимости от вашей настройки
-    }, 1000);
 }
 
-function showLoading() {
-    document.getElementById('auth-loading').style.display = 'block';
-}
+function displayPolls(polls) {
+    const container = document.getElementById('polls-container');
+    container.innerHTML = '';
 
-function hideLoading() {
-    document.getElementById('auth-loading').style.display = 'none';
-}
-
-function showError(message) {
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-
-    const activeForm = document.querySelector('.auth-form[style="display: block;"]');
-    const existingError = activeForm.querySelector('.error-message');
-
-    if (existingError) {
-        existingError.remove();
+    if (polls.length === 0) {
+        container.innerHTML = '<div class="empty">Нет доступных опросов</div>';
+        return;
     }
 
-    activeForm.appendChild(errorElement);
+    polls.forEach(poll => {
+        const pollElement = document.createElement('div');
+        pollElement.className = 'poll-card';
+        pollElement.innerHTML = `
+            <h3>${poll.title}</h3>
+            ${poll.youtubeVideoId ? `
+                <div class="video-preview">
+                    <img src="https://img.youtube.com/vi/${poll.youtubeVideoId}/0.jpg" 
+                         alt="YouTube видео">
+                </div>
+            ` : ''}
+            <div class="poll-actions">
+                <button onclick="viewPoll(${poll.id})">Открыть</button>
+            </div>
+        `;
+        container.appendChild(pollElement);
+    });
+}
+
+function logout() {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) return;
+
+    fetch(`${API_BASE_URL}/logout`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+        .then(res => {
+            localStorage.removeItem('jwtToken');
+            window.location.href = '/auth.html';
+        })
+        .catch(() => alert('Ошибка при выходе'));
 }
 async function createPoll() {
     const title = document.getElementById('poll-title').value;

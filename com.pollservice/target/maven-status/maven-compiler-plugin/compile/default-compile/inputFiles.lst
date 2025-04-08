@@ -1,6 +1,7 @@
 C:\Users\maxim\PollService\src\main\java\com\pollservice\config\SQLiteConfig.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\config\JwtFilter.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\model\Response.java
+C:\Users\maxim\PollService\src\main\java\com\pollservice\dto\CreatePollDto.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\config\AuthBeansConfig.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\service\PollService.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\controller\SpaForwardingController.java
@@ -19,6 +20,7 @@ C:\Users\maxim\PollService\src\main\java\com\pollservice\repository\PollReposito
 C:\Users\maxim\PollService\src\main\java\com\pollservice\service\UserService.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\controller\YouTubeController.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\model\User.java
+C:\Users\maxim\PollService\src\main\java\com\pollservice\controller\RootController.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\dto\UserRegistrationDto.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\repository\RefreshTokenRepository.java
 C:\Users\maxim\PollService\src\main\java\com\pollservice\repository\UserRepository.java
