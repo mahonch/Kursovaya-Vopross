@@ -1,6 +1,7 @@
 package com.pollservice.service;
 
 import com.pollservice.dto.UserRegistrationDto;
+import com.pollservice.model.Role;
 import com.pollservice.model.User;
 import com.pollservice.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -18,6 +21,16 @@ public class UserService implements UserDetailsService {
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+    public void changeUserRole(Long userId, Role newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.setRole(newRole);
+        userRepository.save(user);
+    }
+    // Получение списка всех пользователей
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public void createUser(UserRegistrationDto registrationDto) {

@@ -11,4 +11,5 @@ CREATE TABLE users (
 
 -- Вставляем начального администратора
 INSERT OR IGNORE INTO users (username, password, role) 
-VALUES ('admin', '$2a$10$xVCH4IA5wJto4WXkgzDhf.D6X5Jdwjm5gXLF.y2xVa.TZR5ZOK7qO', 'ADMIN');
+VALUES ('admin', '$2a$10$ArUclvm5Fom9vnalXs3FZOZFInsnK74yyjNP/sUL2grncb6pqZACq', 'ADMIN');
+VALUES ('mahonch', '$2a$10$ArUclvm5Fom9vnalXs3FZOZFInsnK74yyjNP/sUL2grncb6pqZACq', 'ADMIN');

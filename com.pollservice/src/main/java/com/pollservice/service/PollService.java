@@ -71,4 +71,8 @@ public class PollService {
     public List<Poll> getPollsWithYouTubeVideos() {
         return pollRepository.findPollsWithYouTube();
     }
+
+    public List<Poll> getAllPollsForUser(User user) {
+        return pollRepository.findAll(); // или findAll()
+    }
 }

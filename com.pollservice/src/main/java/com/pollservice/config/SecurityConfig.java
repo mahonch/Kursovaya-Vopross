@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/auth.html",
+                                "/admin.html",
                                 "/main.html",
                                 "/profile.html",
                                 "/css/**",
@@ -52,6 +53,7 @@ public class SecurityConfig {
                                 "/error/**",
                                 "/static/**"
                         ).permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Разрешаем эндпоинты аутентификации
                         .requestMatchers("/api/auth/**").permitAll()

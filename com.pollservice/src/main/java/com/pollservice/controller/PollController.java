@@ -28,4 +28,9 @@ public class PollController {
     public List<Poll> getPollsWithYouTube() {
         return pollService.getPollsWithYouTubeVideos();
     }
+    @GetMapping
+    public List<Poll> getAllPolls(@AuthenticationPrincipal User user) {
+        return pollService.getAllPollsForUser(user); // или просто pollService.getAll()
+    }
+
 }
