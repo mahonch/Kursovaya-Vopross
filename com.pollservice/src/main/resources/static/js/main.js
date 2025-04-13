@@ -1,234 +1,238 @@
 
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Проверка наличия токена в localStorage
     const token = localStorage.getItem('jwtToken');
-
     if (!token) {
         window.location.href = '/auth.html';
         return;
     }
 
+    // Загрузка профиля пользователя
     loadUserProfile();
+    // Загрузка доступных опросов с передачей токена
     loadPolls();
 
-    // Функции для добавления ответов и вопросов
+    // Функция добавления варианта ответа
     function addAnswer(button) {
-        const answerContainer = button.previousElementSibling;  // Контейнер для вариантов ответов
-        const newAnswerInput = document.createElement('input');
-        newAnswerInput.type = 'text';
-        newAnswerInput.classList.add('answer-text');
-        newAnswerInput.placeholder = 'Вариант ответа';
-        answerContainer.appendChild(newAnswerInput);
+        const answersContainer = button.previousElementSibling;
+        const answerInput = document.createElement('input');
+        answerInput.type = 'text';
+        answerInput.className = 'answer-text';
+        answerInput.placeholder = 'Вариант ответа';
+        answersContainer.appendChild(answerInput);
     }
 
-
+    // Функция добавления нового вопроса
     function addQuestion() {
         const container = document.getElementById('questions-container');
         const questionCount = document.querySelectorAll('.question-block').length + 1;
-
         const questionDiv = document.createElement('div');
         questionDiv.className = 'question-block';
         questionDiv.innerHTML = `
-        <h3>Вопрос ${questionCount}</h3>
-        <input type="text" class="question-text" placeholder="Текст вопроса" required>
-        <div class="answers-container">
-            <input type="text" class="answer-text" placeholder="Вариант ответа" required>
-        </div>
-        <button type="button" class="add-answer-btn" onclick="addAnswer(this)">+ Добавить вариант</button>
-    `;
+            <h3>Вопрос ${questionCount}</h3>
+            <input type="text" class="question-text" placeholder="Текст вопроса" required>
+            <div class="answers-container">
+                <input type="text" class="answer-text" placeholder="Вариант ответа" required>
+            </div>
+            <button type="button" class="add-answer-btn" onclick="addAnswer(this)">+ Добавить вариант</button>
+        `;
         container.appendChild(questionDiv);
     }
 
-// Убедитесь, что эта функция определена
-    document.querySelector('.submit-btn').addEventListener('click', createPoll);
+    function isValidYouTubeUrl(url) {
+        const youtubeRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.be)\/.+$/;
+        return youtubeRegex.test(url);
+    }
 
-    // Кнопка для показа формы
-    const showFormBtn = document.getElementById('show-form-btn');
-    const formSection = document.getElementById('poll-creation-section');
+    // Функция для создания опроса
+    async function createPoll() {
+        const title = document.getElementById('poll-title').value;
+        const youtubeUrl = document.getElementById('youtube-url').value;
+        const questionBlocks = document.querySelectorAll('.question-block');
+        const questions = [];
 
-    showFormBtn.addEventListener('click', () => {
-        formSection.style.display = 'block';
-        showFormBtn.style.display = 'none';
-    });
-
-    // Функция для загрузки профиля пользователя
-    async function loadUserProfile() {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            alert('Токен не найден. Пожалуйста, войдите снова.');
-            window.location.href = '/auth.html';
+        // Проверка, что данные валидны
+        if (!isValidYouTubeUrl(youtubeUrl)) {
+            alert('Пожалуйста, введите корректный YouTube URL');
             return;
         }
 
-        try {
-            const response = await fetch('/api/user/profile', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+        questionBlocks.forEach(block => {
+            const questionText = block.querySelector('.question-text').value;
+            const answerInputs = block.querySelectorAll('.answer-text');
+            const answers = [];
+            answerInputs.forEach(input => {
+                if (input.value) {
+                    answers.push(input.value);
                 }
             });
-
-            // Проверяем, что сервер вернул JSON, а не HTML
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Сервер вернул не JSON. Возможно, ошибка на сервере или неверный путь.');
-            }
-
-            if (response.ok) {
-                const userData = await response.json();
-                document.getElementById('username-display').textContent = userData.username;
-            } else if (response.status === 401) {
-                alert('Ваш токен истек. Пожалуйста, войдите снова.');
-                localStorage.removeItem('jwtToken');
-                window.location.href = '/auth.html';
+            if (questionText && answers.length > 0) {
+                questions.push({text: questionText, answers});
             } else {
-                console.error('Ошибка при загрузке профиля');
+                alert('Пожалуйста, заполните все вопросы и варианты ответов.');
+                return;
             }
+        });
+
+        const pollData = {title, youtubeUrl, questions};
+
+        // Логируем отправляемые данные
+        console.log("Отправляемые данные: ", JSON.stringify(pollData));
+
+        try {
+            const response = await fetch('http://localhost:8080/api/polls', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(pollData),
+            });
+
+            // Логирование ответа от сервера
+            const responseText = await response.text();  // Считываем ответ как текст
+
+            if (!response.ok) {
+                throw new Error('Ошибка при создании опроса: ' + responseText);
+            }
+
+            // Попытка преобразовать ответ в JSON, если он в правильном формате
+            try {
+                const responseJson = JSON.parse(responseText);
+                alert('Опрос успешно создан!');
+            } catch (e) {
+                alert('Ответ сервера не является JSON: ' + responseText);
+            }
+
+            // Очистить форму или перенаправить на другую страницу
+            document.getElementById('poll-title').value = '';
+            document.getElementById('youtube-url').value = '';
+            document.getElementById('questions-container').innerHTML = '';
         } catch (error) {
-            console.error('Ошибка при загрузке профиля:', error);
+            alert('Ошибка при отправке данных: ' + error.message);
+        }
+    }
+
+    // Функция для выхода
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        window.location.href = '/auth.html';  // Перенаправление на страницу авторизации
+    }
+
+    // Экспортируем функции в глобальную область
+    window.addAnswer = addAnswer;
+    window.addQuestion = addQuestion;
+    window.createPoll = createPoll;
+    window.logout = logout;
+
+    // Загрузка данных профиля пользователя
+    async function loadUserProfile() {
+        const token = localStorage.getItem('jwtToken');
+        const userProfileContainer = document.getElementById('username-display');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/user/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            // Проверка, что сервер возвращает правильный статус
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить профиль: ' + response.status + ' ' + response.statusText);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const user = await response.json();
+                userProfileContainer.textContent = user.username;  // Выводим имя пользователя
+            } else {
+                const text = await response.text(); // Если это не JSON, выводим текст ошибки
+                throw new Error('Ответ сервера не является JSON: ' + text);
+            }
+
+        } catch (error) {
             alert('Ошибка при загрузке профиля: ' + error.message);
         }
     }
 
-
-
-    // Функция для загрузки опросов
-    // Функция для загрузки опросов
-    function loadPolls() {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            alert('Токен не найден. Пожалуйста, войдите снова.');
-            window.location.href = '/auth.html';
-            return;
-        }
-
-        fetch('/api/polls', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Сервер вернул не JSON. Возможно, ошибка на сервере или неверный путь.');
-                }
-
-                if (!response.ok) {
-                    throw new Error("Ошибка загрузки опросов: " + response.status);
-                }
-
-                return response.json();
-            })
-            .then(data => {
-                console.log("Опросы:", data);
-                displayPolls(data); // отобразим опросы
-            })
-            .catch(error => {
-                console.error("Ошибка:", error);
-                alert("Ошибка при загрузке опросов: " + error.message);
-            });
-    }
-
-
-
-    // Функция для отображения опросов
-    function displayPolls(polls) {
-        const container = document.getElementById('polls-container');
-        container.innerHTML = '';
-
-        if (polls.length === 0) {
-            container.innerHTML = '<div class="empty">Нет доступных опросов</div>';
-            return;
-        }
-
-        polls.forEach(poll => {
-            const pollElement = document.createElement('div');
-            pollElement.className = 'poll-card';
-            pollElement.innerHTML = `
-                <h3>${poll.title}</h3>
-                ${poll.youtubeVideoId ? ` 
-                    <div class="video-preview">
-                        <img src="https://img.youtube.com/vi/${poll.youtubeVideoId}/0.jpg" 
-                             alt="YouTube видео">
-                    </div>
-                ` : ''}
-                <div class="poll-actions">
-                    <button onclick="viewPoll(${poll.id})">Открыть</button>
-                </div>
-            `;
-            container.appendChild(pollElement);
-        });
-    }
-
-    // Функция для создания нового опроса
-    async function createPoll() {
-        const title = document.getElementById('poll-title').value;
-        const youtubeUrl = document.getElementById('youtube-url').value;
-        const questions = [];
-
-        // Собираем все вопросы
-        const questionBlocks = document.querySelectorAll('.question-block');
-        questionBlocks.forEach(questionBlock => {
-            const questionText = questionBlock.querySelector('.question-text').value;
-            const answers = [];
-
-            // Собираем все ответы для вопроса
-            const answerInputs = questionBlock.querySelectorAll('.answer-text');
-            answerInputs.forEach(answerInput => {
-                answers.push(answerInput.value);
-            });
-
-            questions.push({ text: questionText, answers });
-        });
-
-        const pollData = {
-            title,
-            youtubeUrl,
-            questions
-        };
+    async function extractVideoIdFromUrl(url) {
+        console.log("Запрос к API с URL: ", url);  // Логируем URL
 
         try {
-            const response = await fetch('/api/polls', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,  // Токен из локального хранилища
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(pollData)
-            });
-
-            if (response.ok) {
-                alert('Опрос успешно создан!');
-                loadPolls();  // Обновить список опросов
-            } else {
-                const error = await response.json();
-                alert('Ошибка при создании опроса: ' + error.message);
+            const response = await fetch(`http://localhost:8080/api/youtube/extract-id?url=${encodeURIComponent(url)}`);
+            if (!response.ok) {
+                throw new Error('Не удалось извлечь video ID');
             }
+
+            const videoId = await response.text();  // Получаем ID из ответа
+            console.log("Извлеченный videoId: ", videoId);  // Логируем извлеченный videoId
+            return videoId;
         } catch (error) {
-            console.error('Ошибка при отправке данных:', error);
+            console.error('Ошибка при извлечении видео ID: ', error);
+            return ''; // Возвращаем пустую строку, если не удалось получить ID
         }
     }
 
-
-
-
-
-    // Функция для выхода
-    function logout() {
+    // Загрузка доступных опросов с добавлением авторизации
+    async function loadPolls() {
         const token = localStorage.getItem('jwtToken');
-        if (!token) return;
+        try {
+            const response = await fetch('http://localhost:8080/api/polls', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
 
-        fetch(`/api/auth/logout`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(res => {
-                localStorage.removeItem('jwtToken');
-                window.location.href = '/auth.html';
-            })
-            .catch(() => alert('Ошибка при выходе'));
+            if (!response.ok) {
+                throw new Error(`Ошибка при загрузке опросов: ${response.status}`);
+            }
+
+            const polls = await response.json();
+            console.log('Полученные опросы:', polls);
+
+            const pollsContainer = document.getElementById("polls-container");
+            pollsContainer.innerHTML = "";
+
+            for (const poll of polls) {
+                let videoId = "";
+                try {
+                    videoId = await extractVideoIdFromUrl(poll.youtubeUrl);
+                } catch (error) {
+                    console.error("Не удалось извлечь video ID для URL:", poll.youtubeUrl);
+                    console.error("Ошибка при извлечении видео ID: ", error);
+                }
+
+                const previewImageUrl = videoId
+                    ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                    : "https://via.placeholder.com/320x180?text=No+Preview";
+
+                const pollCard = document.createElement("div");
+                pollCard.className = "poll-card";
+                pollCard.innerHTML = `
+                <h3>${poll.title}</h3>
+                <img src="${previewImageUrl}" alt="YouTube Preview" class="youtube-preview"/>
+                <a href="/poll/${poll.id}">Перейти к опросу</a>
+            `;
+                pollsContainer.appendChild(pollCard);
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке опросов:", error);
+        }
     }
 
+    // Добавляем обработчик для кнопки "Новый опрос"
+    const showFormButton = document.getElementById('show-form-btn');
+    const pollCreationSection = document.getElementById('poll-creation-section');
 
-    // Привязываем функцию создания опроса к кнопке
-    document.querySelector('.submit-btn').addEventListener('click', createPoll);
+    showFormButton.addEventListener('click', () => {
+        // Переключаем отображение формы
+        if (pollCreationSection.style.display === 'none' || pollCreationSection.style.display === '') {
+            pollCreationSection.style.display = 'block';  // Показываем форму
+        } else {
+            pollCreationSection.style.display = 'none';   // Скрываем форму
+        }
+    });
 });

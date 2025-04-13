@@ -4,6 +4,8 @@ import com.pollservice.dto.CreatePollDto;
 import com.pollservice.model.Poll;
 import com.pollservice.model.User;
 import com.pollservice.service.PollService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +21,14 @@ public class PollController {
     }
 
     @PostMapping
-    public Poll createPoll(@RequestBody CreatePollDto pollDto,
-                           @AuthenticationPrincipal User author) {
-        return pollService.createPollWithQuestions(pollDto, author);
+
+    public Poll createPoll(@RequestBody CreatePollDto pollDto, @AuthenticationPrincipal User author) {
+        System.out.println("Полученные данные для создания опроса: " + pollDto);
+        Poll createdPoll = pollService.createPollWithQuestions(pollDto, author);
+        System.out.println("Созданный опрос: " + createdPoll);
+        return createdPoll;
     }
+
 
     @GetMapping("/with-youtube")
     public List<Poll> getPollsWithYouTube() {
@@ -32,5 +38,9 @@ public class PollController {
     public List<Poll> getAllPolls(@AuthenticationPrincipal User user) {
         return pollService.getAllPollsForUser(user); // или просто pollService.getAll()
     }
+    public ResponseEntity<String> handleError(Exception ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"" + ex.getMessage() + "\"}");
+    }
+
 
 }
