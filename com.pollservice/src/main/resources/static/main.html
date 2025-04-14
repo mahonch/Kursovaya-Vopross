@@ -10,10 +10,12 @@
 </head>
 <script src="/js/auth.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/hh.js"></script>
 <body>
 <header class="main-header">
     <div class="logo">Poll Service</div>
     <nav>
+        <button class="admin-btn" onclick="window.location.href='/admin.html'">Управление</button>
         <a href="/main.html" class="active">Главная</a>
         <a href="/profile.html">Профиль</a>
         <button class="logout-btn" onclick="logout()">Выйти</button>
@@ -26,9 +28,7 @@
         <p>Выберите действие или создайте новый опрос</p>
     </div>
 
-    <div class="admin-management-section" id="admin-management">
-        <button class="admin-btn" onclick="window.location.href='/admin.html'">Управление</button>
-    </div>
+
     <div style="text-align:center; margin: 20px;">
         <button id="show-form-btn" class="submit-btn">+ Новый опрос</button>
     </div>
@@ -64,7 +64,7 @@
     <section class="polls-section">
         <h2>Доступные опросы</h2>
         <div id="polls-container" class="polls-grid">
-            <!-- Опросы будут загружаться здесь -->
+
         </div>
     </section>
 

@@ -1,6 +1,8 @@
 package com.pollservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
@@ -13,6 +15,7 @@ public class Question {
 
     @ManyToOne
     @JoinColumn(name = "poll_id")
+    @JsonIgnore //
     private Poll poll;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)

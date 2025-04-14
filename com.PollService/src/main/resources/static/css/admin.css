@@ -152,7 +152,14 @@ nav a.active {
 }
 
 /* Стили для кнопки управления (которую видит только админ) */
+
+
+.admin-btn:hover {
+    background-color: #218838;
+}
+
 .admin-btn {
+    display: none; /* Изначально скрыта */
     background-color: #28a745;
     color: white;
     padding: 0.5rem 1rem;
@@ -161,13 +168,4 @@ nav a.active {
     cursor: pointer;
     transition: background-color 0.3s;
     margin-left: 1rem;
-}
-
-.admin-btn:hover {
-    background-color: #218838;
-}
-
-.admin-btn:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PollService {
@@ -75,4 +76,15 @@ public class PollService {
     public List<Poll> getAllPollsForUser(User user) {
         return pollRepository.findAll(); // или findAll()
     }
+
+
+    public void deletePollById(Long pollId) {
+        Optional<Poll> pollOptional = pollRepository.findById(pollId);
+        if (pollOptional.isEmpty()) {
+            throw new IllegalArgumentException("Опрос с ID " + pollId + " не найден");
+        }
+
+        pollRepository.deleteById(pollId);
+    }
+
 }

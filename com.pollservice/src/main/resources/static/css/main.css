@@ -150,46 +150,87 @@ nav a.active {
 .submit-btn:hover {
     background: #3367d6;
 }
-.poll-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* Сетка карточек */
+.polls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Карточка опроса */
+.poll-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    align-items: center;
+    padding: 16px;
+    text-align: center;
 }
 
-.poll-thumbnail {
-    width: 100%;
-    height: 180px;
-    overflow: hidden;
+.poll-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.poll-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.poll-item h3 {
-    padding: 1rem;
-    font-size: 1.25rem;
+/* Заголовок */
+.poll-card h3 {
+    margin: 12px 0;
+    font-size: 20px;
     color: #333;
-    margin: 0;
 }
 
-.poll-item a {
-    color: #4285f4;
+/* Превью видео */
+.youtube-preview {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+/* Кнопка-ссылка */
+.poll-card a {
     text-decoration: none;
-    padding: 1rem;
-    font-size: 1rem;
-    display: block;
+    background-color: #4f46e5; /* индиго */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 }
 
-.poll-item a:hover {
-    text-decoration: underline;
+.poll-card a:hover {
+    background-color: #4338ca;
+}
+.poll-author {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+/* Стили для кнопки удаления */
+.delete-btn {
+    background-color: #ef4444;  /* яркий красный */
+    color: #fff;                /* белый текст */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-top: 10px;
 }
 
+.delete-btn:hover {
+    background-color: #dc2626;
+    transform: scale(1.05);
+}
+
+.hidden {
+    display: none;
+}
 
 /* Остальные стили остаются без изменений */

@@ -1,7 +1,8 @@
 package com.pollservice.controller;
 
-import com.pollservice.model.User;
 import com.pollservice.model.Role;
+import com.pollservice.model.User;
+import com.pollservice.service.PollService;
 import com.pollservice.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,8 @@ public class AdminController {
 
     private final UserService userService;
 
-    public AdminController(UserService userService) {
+
+    public AdminController(UserService userService, PollService pollService) {
         this.userService = userService;
     }
 
@@ -32,4 +34,5 @@ public class AdminController {
         userService.changeUserRole(userId, newRole);
         return "User role updated successfully";
     }
+
 }

@@ -83,6 +83,11 @@ public class JwtUtils {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+    // Извлечение роли из токена
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));  // Извлекаем "role" из claims
+    }
+
 
     // Проверка истечения срока
     private boolean isTokenExpired(String token) {
