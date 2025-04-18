@@ -169,3 +169,6 @@ nav a.active {
     transition: background-color 0.3s;
     margin-left: 1rem;
 }
+.hidden {
+    display: none;
+}

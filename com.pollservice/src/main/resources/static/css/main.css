@@ -228,7 +228,6 @@ nav a.active {
     background-color: #dc2626;
     transform: scale(1.05);
 }
-
 .hidden {
     display: none;
 }

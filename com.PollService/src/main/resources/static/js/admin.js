@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Проверяем роль пользователя
+    const userRole = getUserRoleFromToken(token);
+    if (userRole !== 'ADMIN') {
+        alert('Доступ запрещён: требуется роль администратора.');
+        window.location.href = '/main.html';
+        return;
+    }
+
     loadUsers();
     loadPolls();
 
@@ -13,7 +21,15 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('/api/admin/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 403) {
+                        throw new Error('Доступ запрещён: требуется роль администратора.');
+                    }
+                    throw new Error(`Ошибка ${res.status}: ${res.statusText}`);
+                }
+                return res.json();
+            })
             .then(users => {
                 console.log('Ответ от сервера:', users);
                 if (Array.isArray(users)) {
@@ -22,25 +38,36 @@ document.addEventListener('DOMContentLoaded', function () {
                     users.forEach(user => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.role}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editUser(${user.id}, '${user.role}')">Редактировать</button>
-                        </td>`;
+                            <td>${user.username}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <button class="edit-btn" onclick="editUser(${user.id}, '${user.role}')">Редактировать</button>
+                            </td>`;
                         tbody.appendChild(row);
                     });
                 } else {
                     console.error('Ожидался массив пользователей, но получен:', users);
                 }
             })
-            .catch(err => console.error('Ошибка загрузки пользователей:', err));
+            .catch(err => {
+                console.error('Ошибка загрузки пользователей:', err);
+                alert(err.message);
+                if (err.message.includes('Доступ запрещён')) {
+                    window.location.href = '/main.html';
+                }
+            });
     }
 
     function loadPolls() {
         fetch('/api/polls', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Ошибка ${res.status}: ${res.statusText}`);
+                }
+                return res.json();
+            })
             .then(polls => {
                 console.log('Ответ от сервера для опросов:', polls);
                 if (Array.isArray(polls)) {
@@ -49,10 +76,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         const table = document.createElement('table');
                         table.id = 'polls-table';
                         table.innerHTML = `
-                    <thead>
-                        <tr><th>ID</th><th>Название</th><th>Действия</th></tr>
-                    </thead>
-                    <tbody></tbody>`;
+                            <thead>
+                                <tr><th>ID</th><th>Название</th><th>Действия</th></tr>
+                            </thead>
+                            <tbody></tbody>`;
                         document.querySelector('.main-content').appendChild(table);
                         tbody = table.querySelector('tbody');
                     }
@@ -60,23 +87,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     polls.forEach(poll => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                    <td>${poll.id}</td>
-                    <td>${poll.title}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deletePoll(${poll.id})">Удалить</button>
-                    </td>`;
+                            <td>${poll.id}</td>
+                            <td>${poll.title}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deletePoll(${poll.id})">Удалить</button>
+                            </td>`;
                         tbody.appendChild(row);
                     });
                 } else {
                     console.error('Ожидался массив опросов, но получен:', polls);
                 }
             })
-            .catch(err => console.error('Ошибка загрузки опросов:', err));
+            .catch(err => {
+                console.error('Ошибка загрузки опросов:', err);
+                alert('Ошибка загрузки опросов: ' + err.message);
+            });
     }
+
     function getUserRoleFromToken(token) {
         try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.role || (payload.authorities ? payload.authorities[0] : null);
+            const decoded = jwt_decode(token);
+            return decoded.role || null; // Роль хранится в поле 'role'
         } catch (e) {
             console.error('Ошибка декодирования токена:', e);
             return null;
@@ -84,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.deletePoll = function(pollId) {
-
         if (!confirm('Вы уверены, что хотите удалить этот опрос?')) return;
 
         fetch(`/api/polls/${pollId}`, {
@@ -92,25 +122,33 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            },
+            }
         })
             .then(res => {
-                if (!res.ok) throw new Error('Ошибка при удалении опроса');
+                if (!res.ok) {
+                    if (res.status === 403) {
+                        throw new Error('Доступ запрещён: требуется роль администратора.');
+                    }
+                    throw new Error('Ошибка при удалении опроса');
+                }
                 alert('Опрос успешно удалён!');
-                loadPolls(); // перезагрузка таблицы
+                loadPolls();
             })
             .catch(err => {
                 alert('Ошибка: ' + err.message);
                 console.error('Ошибка при удалении опроса:', err);
+                if (err.message.includes('Доступ запрещён')) {
+                    window.location.href = '/main.html';
+                }
             });
     }
 
-
-
-
-    window.editUser = function (userId, currentRole) {
+    window.editUser = function(userId, currentRole) {
         const newRole = prompt(`Введите новую роль для пользователя (текущая: ${currentRole})`, currentRole);
-        if (!newRole) return;
+        if (!newRole || !['ADMIN', 'USER', 'MODERATOR', 'GUEST'].includes(newRole.toUpperCase())) {
+            alert('Недопустимая роль. Выберите: ADMIN, USER, MODERATOR, GUEST.');
+            return;
+        }
 
         fetch(`/api/admin/user/${userId}/role`, {
             method: 'PUT',
@@ -118,20 +156,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newRole)
+            body: JSON.stringify({ name: newRole.toUpperCase() })
         })
             .then(res => {
-                if (res.ok) {
-                    alert('Роль пользователя обновлена');
-                    loadUsers();
-                } else {
-                    alert('Ошибка при обновлении роли');
+                if (!res.ok) {
+                    if (res.status === 403) {
+                        throw new Error('Доступ запрещён: требуется роль администратора.');
+                    }
+                    throw new Error('Ошибка при обновлении роли');
                 }
+                alert('Роль пользователя обновлена');
+                loadUsers();
             })
-            .catch(err => console.error('Ошибка при обновлении пользователя:', err));
+            .catch(err => {
+                alert('Ошибка: ' + err.message);
+                console.error('Ошибка при обновлении пользователя:', err);
+                if (err.message.includes('Доступ запрещён')) {
+                    window.location.href = '/main.html';
+                }
+            });
     };
 
-    window.logout = function () {
+    window.logout = function() {
         fetch(`/api/auth/logout`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
@@ -143,5 +189,3 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(() => alert('Ошибка при выходе'));
     };
 });
-
-

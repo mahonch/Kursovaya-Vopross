@@ -19,10 +19,10 @@ public class JwtUtils {
     private String secret;
 
     @Value("${jwt.expiration}")
-    private long expiration; // в миллисекундах
+    private long expiration;
 
     @Value("${jwt.refreshExpiration}")
-    private long refreshExpiration; // в миллисекундах
+    private long refreshExpiration;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
@@ -30,7 +30,13 @@ public class JwtUtils {
 
     // Генерация access токена
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        // Добавляем роль в claims
+        if (userDetails instanceof com.pollservice.model.User) {
+            com.pollservice.model.User user = (com.pollservice.model.User) userDetails;
+            claims.put("role", user.getRole().name());
+        }
+        return generateToken(claims, userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -83,11 +89,11 @@ public class JwtUtils {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
     // Извлечение роли из токена
     public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));  // Извлекаем "role" из claims
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
-
 
     // Проверка истечения срока
     private boolean isTokenExpired(String token) {
