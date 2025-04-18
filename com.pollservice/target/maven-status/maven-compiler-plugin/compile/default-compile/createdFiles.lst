@@ -22,6 +22,7 @@ com\pollservice\model\User.class
 com\pollservice\PollApplication.class
 com\pollservice\config\SQLiteConfig.class
 com\pollservice\config\JwtFilter.class
+com\pollservice\service\AnswerService.class
 com\pollservice\controller\YouTubeController.class
 com\pollservice\controller\SpaForwardingController.class
 com\pollservice\dto\CreatePollDto.class

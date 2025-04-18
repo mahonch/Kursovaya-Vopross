@@ -59,7 +59,10 @@ public class PollController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Ошибка при удалении опроса: " + e.getMessage());
         }
     }
-
+    @GetMapping("/{pollId}")
+    public Poll getPollById(@PathVariable Long pollId) {
+        return pollService.getPollById(pollId);
+    }
 
 
 }

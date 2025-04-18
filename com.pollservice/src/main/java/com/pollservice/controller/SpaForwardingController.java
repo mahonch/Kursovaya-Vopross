@@ -2,14 +2,20 @@ package com.pollservice.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class SpaForwardingController {
-    @GetMapping("/")
-    @RequestMapping(value = {"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
+
+    @GetMapping("/poll/{id}")
+    public String redirectPoll(@PathVariable Long id) {
+        System.out.println("Redirecting /poll/" + id + " to /poll.html?id=" + id);
+        return "redirect:/poll.html?id=" + id;
+    }
+
+    @GetMapping(value = {"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
     public String redirect() {
+        System.out.println("Redirecting SPA path to /auth.html");
         return "forward:/auth.html";
     }
 }
-

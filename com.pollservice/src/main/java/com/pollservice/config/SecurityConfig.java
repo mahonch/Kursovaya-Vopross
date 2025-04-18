@@ -44,6 +44,8 @@ public class SecurityConfig {
                                 "/auth.html",
                                 "/admin.html",
                                 "/main.html",
+                                "/poll.html",
+                                "/poll/**",
                                 "/profile.html",
                                 "/css/**",
                                 "/js/**",

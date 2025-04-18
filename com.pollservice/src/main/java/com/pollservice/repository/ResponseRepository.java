@@ -3,12 +3,17 @@ package com.pollservice.repository;
 import com.pollservice.model.Response;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
+@Repository
 public interface ResponseRepository extends JpaRepository<Response, Long> {
-    @Query("SELECT r FROM Response r WHERE r.user.id = :userId")
-    List<Response> findByUserId(Long userId);  // Ответы пользователя
+    boolean existsByUserIdAndAnswerId(Long userId, Long answerId);
 
-    @Query("SELECT r.answer.id, COUNT(r) FROM Response r WHERE r.answer.question.poll.id = :pollId GROUP BY r.answer.id")
-    List<Object[]> getPollStatistics(Long pollId);  // Статистика по опросу
+    @Query("SELECT r FROM Response r " +
+            "JOIN Answer a ON r.answerId = a.id " +
+            "JOIN Question q ON a.question.id = q.id " +
+            "WHERE q.poll.id = :pollId")
+    List<Response> findByPollId(Long pollId);
 }

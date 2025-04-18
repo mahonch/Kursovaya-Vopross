@@ -64,6 +64,10 @@ public class PollService {
 
         return poll;
     }
+    public Poll getPollById(Long pollId) {
+        return pollRepository.findById(pollId)
+                .orElseThrow(() -> new IllegalArgumentException("Опрос не найден"));
+    }
 
     public List<Poll> getPollsByAuthor(User author) {
         return pollRepository.findByAuthorId(author.getId());

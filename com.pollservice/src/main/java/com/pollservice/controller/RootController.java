@@ -11,14 +11,13 @@ public class RootController {
     @GetMapping("/")
     public String handleRoot() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         boolean isAuthenticated = auth != null && auth.isAuthenticated()
                 && !auth.getPrincipal().equals("anonymousUser");
-
         if (isAuthenticated) {
             return "redirect:/main.html";
         } else {
             return "redirect:/auth.html";
         }
     }
+
 }
