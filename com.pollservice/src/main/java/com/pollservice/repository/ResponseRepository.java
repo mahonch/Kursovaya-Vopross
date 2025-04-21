@@ -12,8 +12,10 @@ public interface ResponseRepository extends JpaRepository<Response, Long> {
     boolean existsByUserIdAndAnswerId(Long userId, Long answerId);
 
     @Query("SELECT r FROM Response r " +
-            "JOIN Answer a ON r.answerId = a.id " +
-            "JOIN Question q ON a.question.id = q.id " +
+            "JOIN r.answer a " +
+            "JOIN a.question q " +
             "WHERE q.poll.id = :pollId")
     List<Response> findByPollId(Long pollId);
+
+    Long countByAnswerId(Long id);
 }

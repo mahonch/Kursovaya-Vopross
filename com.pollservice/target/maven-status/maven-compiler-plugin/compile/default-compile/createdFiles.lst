@@ -1,10 +1,13 @@
 com\pollservice\repository\ResponseRepository.class
 com\pollservice\config\JwtUtils.class
+com\pollservice\model\Comment.class
 com\pollservice\model\Question.class
 com\pollservice\model\Response.class
 com\pollservice\repository\PollRepository.class
 com\pollservice\dto\CreatePollDto$QuestionDto.class
 com\pollservice\repository\AnswerRepository.class
+com\pollservice\service\ResponseService$QuestionStatistics.class
+com\pollservice\controller\CommentController.class
 com\pollservice\controller\PollController.class
 com\pollservice\config\AuthBeansConfig.class
 com\pollservice\model\RefreshToken.class
@@ -13,6 +16,7 @@ com\pollservice\repository\QuestionRepository.class
 com\pollservice\repository\RefreshTokenRepository.class
 com\pollservice\service\UserService.class
 com\pollservice\service\YouTubeService.class
+com\pollservice\repository\CommentRepository.class
 com\pollservice\model\Role.class
 com\pollservice\service\ResponseService.class
 com\pollservice\config\SecurityConfig.class
@@ -28,6 +32,7 @@ com\pollservice\controller\SpaForwardingController.class
 com\pollservice\dto\CreatePollDto.class
 com\pollservice\controller\ResponseController.class
 com\pollservice\controller\UserController.class
+com\pollservice\service\CommentService.class
 com\pollservice\controller\UserController$UserProfile.class
 com\pollservice\service\PollService.class
 com\pollservice\dto\UserRegistrationDto.class

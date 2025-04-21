@@ -1,6 +1,7 @@
 package com.pollservice.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +12,8 @@ import java.util.Collections;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    // Геттеры и сеттеры
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +24,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -28,11 +32,6 @@ public class User implements UserDetails {
     // Конструкторы
     public User() {
         this.role = Role.USER; // Значение по умолчанию
-    }
-
-    // Геттеры и сеттеры
-    public Long getId() {
-        return id;
     }
 
     public void setId(Long id) {
@@ -55,10 +54,6 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
     }
 
     public void setRole(Role role) {

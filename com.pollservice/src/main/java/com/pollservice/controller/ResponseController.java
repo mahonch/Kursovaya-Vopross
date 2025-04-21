@@ -4,12 +4,12 @@ import com.pollservice.config.JwtUtils;
 import com.pollservice.service.ResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/response")
+@RequestMapping("/api/responses")
 public class ResponseController {
 
     private final ResponseService responseService;
@@ -21,34 +21,36 @@ public class ResponseController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<String> submitResponse(@RequestParam Long answerId,
-                                                 @RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> submitResponse(
+            @RequestParam("answerId") Long answerId,
+            @RequestHeader("Authorization") String authorizationHeader) {
         try {
             String jwt = authorizationHeader.replace("Bearer ", "");
             String username = jwtUtils.extractUsername(jwt);
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Long userId = responseService.getUserIdByUsername(username);
             responseService.submitResponse(answerId, userId);
-            return ResponseEntity.ok("Ответ успешно отправлен");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.ok("Response submitted successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при отправке ответа: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping("/stats/{pollId}")
+    @GetMapping("/statistics/{pollId}")
     public ResponseEntity<?> getStatistics(@PathVariable Long pollId) {
         try {
-            return ResponseEntity.ok(responseService.getStatistics(pollId));
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            List<ResponseService.QuestionStatistics> statistics = responseService.getStatistics(pollId);
+            return ResponseEntity.ok(statistics);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching statistics: " + e.getMessage());
         }
     }
 
-    @GetMapping("/has-responded/{pollId}")
-    public ResponseEntity<Boolean> hasUserResponded(@PathVariable Long pollId,
-                                                    @RequestHeader("Authorization") String authorizationHeader) {
+    @GetMapping("/hasResponded/{pollId}")
+    public ResponseEntity<?> hasResponded(
+            @PathVariable Long pollId,
+            @RequestHeader("Authorization") String authorizationHeader) {
         try {
             String jwt = authorizationHeader.replace("Bearer ", "");
             String username = jwtUtils.extractUsername(jwt);
@@ -56,7 +58,7 @@ public class ResponseController {
             boolean hasResponded = responseService.hasUserRespondedToPollByPollId(pollId, userId);
             return ResponseEntity.ok(hasResponded);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

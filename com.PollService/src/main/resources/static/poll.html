@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Опрос | Poll Service</title>
     <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/auth.js"></script>
+    <script src="/js/poll.js"></script>
+    <script src="/js/jwt-decode.min.js"></script>
 </head>
 <body>
 <header class="main-header">
@@ -19,23 +22,18 @@
 
 <main class="main-content">
     <div class="welcome-message">
-        <h1>Опрос</h1>
+        <h1 id="poll-title">Загрузка опроса...</h1>
     </div>
 
     <section class="poll-section">
-        <div id="poll-container" class="poll-grid"></div>
+        <div id="youtube-video" style="text-align: center; margin: 20px 0;"></div>
+        <div id="questions" class="questions-grid"></div>
         <div style="text-align: center; margin: 20px;">
-            <button id="submit-btn" class="submit-btn">Ответить</button>
+            <button id="submit-responses" class="submit-btn hidden">Отправить ответы</button>
         </div>
-    </section>
-
-    <section class="statistics-section">
-        <div id="statistics" class="statistics-grid"></div>
+        <div id="statistics" class="statistics-section"></div>
     </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-<script src="/js/hh.js"></script>
-<script src="/js/poll.js"></script>
 </body>
 </html>

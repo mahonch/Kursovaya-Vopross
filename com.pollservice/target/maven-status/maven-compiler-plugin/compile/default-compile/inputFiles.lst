@@ -1,9 +1,11 @@
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\dto\TokenResponse.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\service\CommentService.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\AuthBeansConfig.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\RefreshTokenRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\JwtUtils.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\SQLiteConfig.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\SpaForwardingController.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Comment.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\PollRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\service\UserService.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\AuthController.java
@@ -23,6 +25,7 @@ C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\p
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Answer.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\UserRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\service\AnswerService.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\CommentController.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\QuestionRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\SecurityConfig.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\service\YouTubeService.java
@@ -30,6 +33,7 @@ C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\p
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\UserController.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\User.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\AnswerRepository.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\CommentRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\AdminController.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\dto\UserRegistrationDto.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Poll.java

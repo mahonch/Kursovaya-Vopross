@@ -10,13 +10,14 @@ public class Response {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "answer_id", nullable = false)
+    private Answer answer;
 
-    @Column(name = "answer_id", nullable = false)
-    private Long answerId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // Геттеры и сеттеры
     public Long getId() {
         return id;
     }
@@ -25,19 +26,19 @@ public class Response {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Answer getAnswer() {
+        return answer;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
     }
 
-    public Long getAnswerId() {
-        return answerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setAnswerId(Long answerId) {
-        this.answerId = answerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

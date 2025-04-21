@@ -25,44 +25,66 @@ public class PollController {
     }
 
     @PostMapping
-
-    public Poll createPoll(@RequestBody CreatePollDto pollDto, @AuthenticationPrincipal User author) {
-        System.out.println("Полученные данные для создания опроса: " + pollDto);
-        Poll createdPoll = pollService.createPollWithQuestions(pollDto, author);
-        System.out.println("Созданный опрос: " + createdPoll);
-        return createdPoll;
+    public ResponseEntity<?> createPoll(@RequestBody CreatePollDto pollDto, @AuthenticationPrincipal User author) {
+        try {
+            System.out.println("Полученные данные для создания опроса: " + pollDto);
+            if (author == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Пользователь не авторизован");
+            }
+            Poll createdPoll = pollService.createPollWithQuestions(pollDto, author);
+            System.out.println("Созданный опрос: " + createdPoll);
+            return ResponseEntity.ok(createdPoll);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при создании опроса: " + e.getMessage());
+        }
     }
-
 
     @GetMapping("/with-youtube")
-    public List<Poll> getPollsWithYouTube() {
-        return pollService.getPollsWithYouTubeVideos();
+    public ResponseEntity<List<Poll>> getPollsWithYouTube() {
+        try {
+            List<Poll> polls = pollService.getPollsWithYouTubeVideos();
+            return ResponseEntity.ok(polls);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
     @GetMapping
-    public List<Poll> getAllPolls(@AuthenticationPrincipal User user) {
-        return pollService.getAllPollsForUser(user); // или просто pollService.getAll()
+    public ResponseEntity<List<Poll>> getAllPolls(@AuthenticationPrincipal User user) {
+        try {
+            List<Poll> polls = pollService.getAllPollsForUser(user);
+            return ResponseEntity.ok(polls);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
-    public ResponseEntity<String> handleError(Exception ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"" + ex.getMessage() + "\"}");
-    }
+
     @Autowired
-    private UserService userService; // или UserRepository
+    private UserService userService;
 
     @DeleteMapping("/{pollId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deletePoll(@PathVariable Long pollId, Principal principal) {
         System.out.println("Удаляет: " + principal.getName());
         try {
-            pollService.deletePollById(pollId); // если автор не нужен
+            pollService.deletePollById(pollId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Ошибка при удалении опроса: " + e.getMessage());
         }
     }
+
     @GetMapping("/{pollId}")
-    public Poll getPollById(@PathVariable Long pollId) {
-        return pollService.getPollById(pollId);
+    public ResponseEntity<?> getPollById(@PathVariable Long pollId) {
+        try {
+            Poll poll = pollService.getPollById(pollId);
+            return ResponseEntity.ok(poll);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при получении опроса: " + e.getMessage());
+        }
     }
-
-
 }

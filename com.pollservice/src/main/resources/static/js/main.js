@@ -40,34 +40,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function createPoll() {
-        const title = document.getElementById('poll-title').value;
-        const youtubeUrl = document.getElementById('youtube-url').value;
+        const title = document.getElementById('poll-title').value.trim();
+        const youtubeUrl = document.getElementById('youtube-url').value.trim();
         const questionBlocks = document.querySelectorAll('.question-block');
         const questions = [];
 
-        if (!isValidYouTubeUrl(youtubeUrl)) {
+        // Валидация заголовка
+        if (!title) {
+            alert('Пожалуйста, введите название опроса');
+            return;
+        }
+
+        // Валидация YouTube URL
+        if (youtubeUrl && !isValidYouTubeUrl(youtubeUrl)) {
             alert('Пожалуйста, введите корректный YouTube URL');
             return;
         }
 
-        questionBlocks.forEach(block => {
-            const questionText = block.querySelector('.question-text').value;
+        // Валидация вопросов и ответов
+        let hasValidQuestions = false;
+        for (const block of questionBlocks) {
+            const questionText = block.querySelector('.question-text').value.trim();
             const answerInputs = block.querySelectorAll('.answer-text');
             const answers = [];
+
             answerInputs.forEach(input => {
-                if (input.value) {
-                    answers.push(input.value);
+                const answerText = input.value.trim();
+                if (answerText) {
+                    answers.push(answerText);
                 }
             });
-            if (questionText && answers.length > 0) {
-                questions.push({text: questionText, answers});
-            } else {
-                alert('Пожалуйста, заполните все вопросы и варианты ответов.');
-                return;
-            }
-        });
 
-        const pollData = {title, youtubeUrl, questions};
+            if (questionText && answers.length > 0) {
+                questions.push({ text: questionText, answers });
+                hasValidQuestions = true;
+            }
+        }
+
+        if (!hasValidQuestions) {
+            alert('Пожалуйста, добавьте хотя бы один вопрос с вариантами ответов');
+            return;
+        }
+
+        const pollData = { title, youtubeUrl, questions };
 
         try {
             const response = await fetch('http://localhost:8080/api/polls', {
@@ -95,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('poll-title').value = '';
             document.getElementById('youtube-url').value = '';
             document.getElementById('questions-container').innerHTML = '';
+            loadPolls(currentUserRole); // Обновляем список опросов
         } catch (error) {
             alert('Ошибка при отправке данных: ' + error.message);
         }
@@ -215,13 +231,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 pollCard.className = "poll-card";
                 pollCard.innerHTML = `
                     <h3>${poll.title}</h3>
-                    <p class="poll-author">Автор: ${poll.author.username}</p>
+                    <p class="poll-author">Автор: ${poll.user?.username || 'Unknown User'}</p>
                     <img src="${previewImageUrl}" alt="YouTube Preview" class="youtube-preview"/>
-                    <a href="/poll/${poll.id}">Перейти к опросу</a>
+                    <a href="/poll.html?pollId=${poll.id}">Перейти к опросу</a>
                     ${deleteButtonHTML}
                 `;
 
-                // Назначаем обработчик на кнопку удаления
                 if (isAdmin) {
                     pollCard.querySelector('.delete-btn').addEventListener('click', () => {
                         deletePoll(poll.id);
@@ -258,7 +273,3 @@ document.addEventListener('DOMContentLoaded', async () => {
                 : 'none';
     });
 });
-
-
-
-

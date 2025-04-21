@@ -33,21 +33,33 @@ public class PollService {
 
     @Transactional
     public Poll createPollWithQuestions(CreatePollDto pollDto, User author) {
-        // Создаем основной опрос
+        // Валидация входных данных
+        if (!pollDto.isValid()) {
+            throw new IllegalArgumentException("Название опроса и вопросы не могут быть пустыми");
+        }
+
+        for (CreatePollDto.QuestionDto questionDto : pollDto.getQuestions()) {
+            if (!questionDto.isValid()) {
+                throw new IllegalArgumentException("Все вопросы и варианты ответов должны быть заполнены");
+            }
+        }
+
         Poll poll = new Poll();
         poll.setTitle(pollDto.getTitle());
         poll.setQuestionCount(pollDto.getQuestionCount());
-        poll.setAuthor(author);
+        poll.setUser(author);
 
-        // Извлекаем ID видео
-        if (pollDto.getYoutubeUrl() != null) {
-            String videoId = youTubeService.extractVideoId(pollDto.getYoutubeUrl());
-            poll.setYoutubeVideoId(videoId);
+        if (pollDto.getYoutubeUrl() != null && !pollDto.getYoutubeUrl().trim().isEmpty()) {
+            try {
+                String videoId = youTubeService.extractVideoId(pollDto.getYoutubeUrl());
+                poll.setYoutubeVideoId(videoId);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Не удалось извлечь YouTube Video ID: " + e.getMessage());
+            }
         }
 
         poll = pollRepository.save(poll);
 
-        // Добавляем вопросы и ответы
         for (CreatePollDto.QuestionDto questionDto : pollDto.getQuestions()) {
             Question question = new Question();
             question.setText(questionDto.getText());
@@ -64,13 +76,14 @@ public class PollService {
 
         return poll;
     }
+
     public Poll getPollById(Long pollId) {
         return pollRepository.findById(pollId)
                 .orElseThrow(() -> new IllegalArgumentException("Опрос не найден"));
     }
 
     public List<Poll> getPollsByAuthor(User author) {
-        return pollRepository.findByAuthorId(author.getId());
+        return pollRepository.findByUserId(author.getId());
     }
 
     public List<Poll> getPollsWithYouTubeVideos() {
@@ -78,9 +91,8 @@ public class PollService {
     }
 
     public List<Poll> getAllPollsForUser(User user) {
-        return pollRepository.findAll(); // или findAll()
+        return pollRepository.findAll();
     }
-
 
     public void deletePollById(Long pollId) {
         Optional<Poll> pollOptional = pollRepository.findById(pollId);
@@ -90,5 +102,4 @@ public class PollService {
 
         pollRepository.deleteById(pollId);
     }
-
 }
