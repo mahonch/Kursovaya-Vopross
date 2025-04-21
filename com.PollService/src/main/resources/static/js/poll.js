@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pollId = urlParams.get('pollId');
     const token = localStorage.getItem('jwtToken');
+    let currentUserId = null;
+    let userRole = null;
 
     if (!pollId) {
         console.error('Poll ID is missing in the URL. Redirecting to main page...');
@@ -16,6 +18,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const headers = { 'Authorization': `Bearer ${token}` };
+
+    // Извлечение userId и роли из токена
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        currentUserId = payload.sub; // Предполагаем, что userId хранится в поле sub
+        userRole = payload.role || 'USER';
+        console.log('Current user ID:', currentUserId, 'Role:', userRole);
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        window.location.href = '/auth.html';
+        return;
+    }
 
     async function fetchPoll() {
         try {
@@ -61,7 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const statDiv = document.createElement('div');
                 statDiv.className = 'mb-4';
 
-                // Вычисляем общее количество голосов для текущего вопроса
                 const totalVotes = Object.values(stat.answerStatistics).reduce((sum, count) => sum + count, 0);
 
                 statDiv.innerHTML = `<h3 class="text-lg font-semibold">${stat.questionText}</h3>`;
@@ -69,7 +82,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 answersContainer.className = 'answers-stats';
 
                 Object.entries(stat.answerStatistics).forEach(([answer, count]) => {
-                    // Вычисляем процент
                     const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
 
                     const answerDiv = document.createElement('div');
@@ -88,7 +100,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 statsDiv.appendChild(statDiv);
             });
 
-            // Анимация заполнения прогресс-баров
             setTimeout(() => {
                 document.querySelectorAll('.progress-fill').forEach(bar => {
                     const percentage = bar.getAttribute('data-percentage');
@@ -98,6 +109,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error fetching statistics:', error);
             alert('Не удалось загрузить статистику: ' + error.message);
+        }
+    }
+
+    async function fetchComments() {
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments/poll/${pollId}`, { headers });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to fetch comments: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            const comments = await response.json();
+            const commentsDiv = document.getElementById('comments');
+            commentsDiv.innerHTML = '<h2 class="text-xl font-bold mb-2">Комментарии</h2>';
+
+            if (comments.length === 0) {
+                commentsDiv.innerHTML += '<p>Комментариев пока нет. Будьте первым!</p>';
+            } else {
+                const commentsList = document.createElement('div');
+                commentsList.className = 'comments-list';
+
+                comments.forEach(comment => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment-item';
+                    commentDiv.setAttribute('data-comment-id', comment.id);
+
+                    const formattedDate = new Date(comment.createdAt).toLocaleString('ru-RU');
+                    const isAuthor = comment.user.id.toString() === currentUserId.toString();
+                    const canDelete = isAuthor || userRole === 'ADMIN';
+
+                    commentDiv.innerHTML = `
+                        <div class="comment-header">
+                            <span class="comment-author">${comment.user.username}</span>
+                            <span class="comment-date">${formattedDate}</span>
+                        </div>
+                        <div class="comment-text">${comment.text}</div>
+                        ${canDelete ? `<button class="delete-btn delete-comment-btn" onclick="deleteComment(${comment.id})">Удалить</button>` : ''}
+                    `;
+                    commentsList.appendChild(commentDiv);
+                });
+
+                commentsDiv.appendChild(commentsList);
+            }
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+            alert('Не удалось загрузить комментарии: ' + error.message);
         }
     }
 
@@ -144,11 +200,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Не удалось отправить ответ: ' + error.message);
         }
     });
-    function logout() {
-        localStorage.removeItem('jwtToken');
-        window.location.href = '/auth.html';
-    }
-    window.logout = logout;
+
+    document.getElementById('submit-comment').addEventListener('click', async () => {
+        const commentText = document.getElementById('comment-text').value.trim();
+        if (!commentText) {
+            alert('Комментарий не может быть пустым');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/comments/submit', {
+                method: 'POST',
+                headers: { ...headers, 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ pollId, text: commentText })
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to submit comment: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            document.getElementById('comment-text').value = ''; // Очищаем поле
+            await fetchComments(); // Обновляем список комментариев
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            alert('Не удалось отправить комментарий: ' + error.message);
+        }
+    });
+
+    window.deleteComment = async (commentId) => {
+        if (!confirm('Вы уверены, что хотите удалить этот комментарий?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+                method: 'DELETE',
+                headers
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to delete comment: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            await fetchComments(); // Обновляем список комментариев
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            alert('Не удалось удалить комментарий: ' + error.message);
+        }
+    };
+
     await fetchPoll();
     await checkHasResponded();
+    await fetchComments();
 });

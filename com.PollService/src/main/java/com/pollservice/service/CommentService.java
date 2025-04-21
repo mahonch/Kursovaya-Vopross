@@ -44,6 +44,15 @@ public class CommentService {
         return commentRepository.findByPollId(pollId);
     }
 
+    public Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElse(null);
+    }
+
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
     public Long getUserIdByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username))

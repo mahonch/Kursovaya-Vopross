@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Опрос | Poll Service</title>
     <link rel="stylesheet" href="/css/main.css">
-    <script src="/js/auth.js"></script>
-    <script src="/js/poll.js"></script>
-    <script src="/js/jwt-decode.min.js"></script>
 </head>
 <body>
 <header class="main-header">
@@ -21,18 +18,27 @@
 </header>
 
 <main class="main-content">
-    <div class="welcome-message">
-        <h1 id="poll-title">Загрузка опроса...</h1>
-    </div>
-
     <section class="poll-section">
-        <div id="youtube-video" style="text-align: center; margin: 20px 0;"></div>
+        <h1 id="poll-title" class="text-2xl font-bold mb-4"></h1>
+        <div id="youtube-video" class="mb-4"></div>
         <div id="questions" class="questions-grid"></div>
-        <div style="text-align: center; margin: 20px;">
-            <button id="submit-responses" class="submit-btn hidden">Отправить ответы</button>
+        <button id="submit-responses" class="submit-btn hidden">Отправить ответы</button>
+    </section>
+
+    <section id="statistics" class="statistics-section"></section>
+
+    <section id="comments-section" class="comments-section">
+        <h2 class="text-xl font-bold mb-2">Добавить комментарий</h2>
+        <div class="comment-form">
+            <textarea id="comment-text" class="comment-textarea" placeholder="Ваш комментарий..." required></textarea>
+            <button id="submit-comment" class="submit-btn">Отправить</button>
         </div>
-        <div id="statistics" class="statistics-section"></div>
+        <div id="comments" class="comments-list"></div>
     </section>
 </main>
+
+<script src="/js/auth.js"></script>
+<script src="/js/poll.js"></script>
+<script src="/js/checkRoleAndUpdateButton.js"></script>
 </body>
 </html>
