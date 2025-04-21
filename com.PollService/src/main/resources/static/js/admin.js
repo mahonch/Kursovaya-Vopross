@@ -177,15 +177,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     };
 
-    window.logout = function() {
-        fetch(`/api/auth/logout`, {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(() => {
-                localStorage.removeItem('jwtToken');
-                window.location.href = '/auth.html';
-            })
-            .catch(() => alert('Ошибка при выходе'));
-    };
+
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        window.location.href = '/auth.html';
+    }
+    window.logout = logout;
 });

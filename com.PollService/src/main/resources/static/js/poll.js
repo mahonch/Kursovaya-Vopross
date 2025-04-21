@@ -144,7 +144,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Не удалось отправить ответ: ' + error.message);
         }
     });
-
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        window.location.href = '/auth.html';
+    }
+    window.logout = logout;
     await fetchPoll();
     await checkHasResponded();
 });

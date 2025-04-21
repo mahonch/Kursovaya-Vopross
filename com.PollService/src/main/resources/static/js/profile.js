@@ -85,4 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Ошибка: ' + error.message);
         }
     };
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        window.location.href = '/auth.html';
+    }
+    window.logout = logout;
 });

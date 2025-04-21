@@ -114,7 +114,11 @@ nav a:hover {
 .admin-btn {
     background: linear-gradient(135deg, var(--success-gradient-start) 0%, var(--success-gradient-end) 100%);
     color: white;
-    display: none;
+    /* Убираем display: none; из основного стиля, чтобы управлять видимостью через .hidden */
+}
+
+.admin-btn.hidden {
+    display: none; /* Скрываем кнопку, только если есть класс .hidden */
 }
 
 .admin-btn:hover {
@@ -731,7 +735,7 @@ input[type="file"]:focus {
         font-size: 1.2rem;
     }
 
-    .nav {
+    nav {
         gap: 0.5rem;
     }
 
