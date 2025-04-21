@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 "/",
                                 "/auth.html",
                                 "/admin.html",
+                                "/uploads/**",
                                 "/main.html",
                                 "/poll.html",
                                 "/poll/**",

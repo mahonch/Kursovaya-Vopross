@@ -43,3 +43,4 @@ com\pollservice\repository\UserRepository.class
 com\pollservice\model\Poll.class
 com\pollservice\controller\AuthController.class
 com\pollservice\dto\RefreshTokenRequest.class
+com\pollservice\config\WebConfig.class

@@ -23,6 +23,18 @@
         <p><strong>Имя пользователя:</strong> <span id="username"></span></p>
         <p><strong>Роль:</strong> <span id="role"></span></p>
         <p><strong>Токен:</strong> <span id="token"></span></p>
+        <div class="profile-picture-section">
+            <h2>Фотография профиля</h2>
+            <img id="profile-picture" src="/images/fallback-profile.png" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+            <div style="margin-top: 10px;">
+                <input type="file" id="profile-picture-input" accept="image/*">
+                <button class="submit-btn" onclick="uploadProfilePicture()">Загрузить фото</button>
+            </div>
+        </div>
+        <div class="statistics-section">
+            <h2>Статистика</h2>
+            <p><strong>Пройдено опросов:</strong> <span id="completed-polls">0</span></p>
+        </div>
     </div>
 </main>
 <script src="/js/hh.js"></script>

@@ -12,7 +12,6 @@ import java.util.Collections;
 @Table(name = "users")
 public class User implements UserDetails {
 
-    // Геттеры и сеттеры
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +28,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Column(name = "profile_picture")
+    private String profilePicture; // Путь к файлу фотографии
+
     // Конструкторы
     public User() {
-        this.role = Role.USER; // Значение по умолчанию
+        this.role = Role.USER;
     }
 
     public void setId(Long id) {
@@ -58,6 +60,14 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     // UserDetails методы
