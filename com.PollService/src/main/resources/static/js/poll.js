@@ -138,9 +138,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const isAuthor = comment.user.id.toString() === currentUserId.toString();
                     const canDelete = isAuthor || userRole === 'ADMIN';
 
+                    // Формируем полный URL для фотографии профиля
+                    const profilePictureUrl = comment.user.profilePicture
+                        ? `http://localhost:8080${comment.user.profilePicture}`
+                        : '/images/fallback-profile.png'; // Локальное запасное изображение
+
                     commentDiv.innerHTML = `
                         <div class="comment-header">
-                            <span class="comment-author">${comment.user.username}</span>
+                            <div class="comment-author-section">
+                                <img src="${profilePictureUrl}" alt="Profile Picture" class="comment-profile-pic">
+                                <span class="comment-author">${comment.user.username}</span>
+                            </div>
                             <span class="comment-date">${formattedDate}</span>
                         </div>
                         <div class="comment-text">${comment.text}</div>

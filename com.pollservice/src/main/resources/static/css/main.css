@@ -671,7 +671,27 @@ input[type="file"]:focus {
 .comment-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.5rem;
+}
+
+.comment-author-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.comment-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--input-border);
+    transition: transform 0.3s ease;
+}
+
+.comment-profile-pic:hover {
+    transform: scale(1.1);
 }
 
 .comment-author {
@@ -802,6 +822,11 @@ input[type="file"]:focus {
     .auth-form {
         padding: 1.5rem;
     }
+
+    .comment-profile-pic {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -832,5 +857,10 @@ input[type="file"]:focus {
 
     .auth-form h2 {
         font-size: 1.3rem;
+    }
+
+    .comment-profile-pic {
+        width: 28px;
+        height: 28px;
     }
 }
