@@ -156,14 +156,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name: newRole.toUpperCase() })
+            body: JSON.stringify(newRole.toUpperCase()) // Отправляем строку, а не объект
         })
             .then(res => {
                 if (!res.ok) {
                     if (res.status === 403) {
                         throw new Error('Доступ запрещён: требуется роль администратора.');
                     }
-                    throw new Error('Ошибка при обновлении роли');
+                    return res.text().then(text => {
+                        throw new Error(`Ошибка при обновлении роли: ${text}`);
+                    });
                 }
                 alert('Роль пользователя обновлена');
                 loadUsers();
@@ -176,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
     };
-
 
     function logout() {
         localStorage.removeItem('jwtToken');
