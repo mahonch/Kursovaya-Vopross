@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:8080/api/auth';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,8 +12,8 @@ function hideLoading() {
     document.getElementById('auth-loading').style.display = 'none';
 }
 
-function showError(message) {
-    const authError = document.getElementById('auth-error');
+function showError(message, formType) {
+    const authError = document.getElementById(`auth-error-${formType}`);
     authError.textContent = message;
     authError.style.color = 'red';
 }
@@ -36,14 +35,13 @@ document.getElementById('register').addEventListener('submit', async (e) => {
 
         if (response.ok) {
             alert('Регистрация прошла успешно! Теперь вы можете войти.');
-            // При успешной регистрации можно переключить видимую форму,
-            // либо просто предложить пользователю перейти к входу.
+            showTab('login'); // Переключаем на форму входа
         } else {
             const errorText = await response.text();
-            showError(errorText);
+            showError(errorText, 'register');
         }
     } catch (error) {
-        showError('Ошибка соединения с сервером');
+        showError('Ошибка соединения с сервером', 'register');
     } finally {
         hideLoading();
     }
@@ -65,23 +63,16 @@ document.getElementById('login').addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            // Если сервер возвращает просто строку токена:
             const token = await response.text();
-            // Если сервер возвращает JSON, тогда:
-            // const data = await response.json();
-            // const token = data.token;
-
             console.log('Получен токен:', token);
-
             localStorage.setItem('jwtToken', token);
-            // Перенаправляем пользователя на закрытую страницу:
             window.location.href = '/main.html';
         } else {
             const errorText = await response.text();
-            showError(errorText);
+            showError(errorText, 'login');
         }
     } catch (error) {
-        showError('Ошибка соединения с сервером');
+        showError('Ошибка соединения с сервером', 'login');
     } finally {
         hideLoading();
     }

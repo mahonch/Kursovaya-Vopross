@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация | Poll Service</title>
-    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <div class="auth-container">
     <div class="auth-box">
         <div class="auth-tabs">
-
             <button class="tab-btn active" onclick="showTab('login')">Вход</button>
             <button class="tab-btn" onclick="showTab('register')">Регистрация</button>
         </div>
@@ -26,8 +25,9 @@
                     <label for="login-password">Пароль</label>
                     <input type="password" id="login-password" required>
                 </div>
-                <button type="submit" class="auth-btn">Войти</button>
+                <button type="submit" class="submit-btn">Войти</button>
             </form>
+            <div id="auth-error-login" class="error-message"></div>
         </div>
 
         <div id="register-form" class="auth-form" style="display: none;">
@@ -41,8 +41,9 @@
                     <label for="reg-password">Пароль</label>
                     <input type="password" id="reg-password" required>
                 </div>
-                <button type="submit" class="auth-btn">Зарегистрироваться</button>
+                <button type="submit" class="submit-btn">Зарегистрироваться</button>
             </form>
+            <div id="auth-error-register" class="error-message"></div>
         </div>
 
         <div id="auth-loading" class="loading" style="display: none;">
@@ -53,6 +54,5 @@
 </div>
 
 <script src="/js/auth.js"></script>
-
 </body>
 </html>

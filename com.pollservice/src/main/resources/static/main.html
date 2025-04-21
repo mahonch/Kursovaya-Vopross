@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная | Poll Service</title>
     <link rel="stylesheet" href="/css/main.css">
-
 </head>
-<script src="/js/auth.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/hh.js"></script>
-<script src="/js/jwt-decode.min.js"></script>
 <body>
 <header class="main-header">
     <div class="logo">Poll Service</div>
@@ -28,7 +22,6 @@
         <h1>Добро пожаловать, <span id="username-display"></span>!</h1>
         <p>Выберите действие или создайте новый опрос</p>
     </div>
-
 
     <div style="text-align:center; margin: 20px;">
         <button id="show-form-btn" class="submit-btn">+ Новый опрос</button>
@@ -64,15 +57,13 @@
 
     <section class="polls-section">
         <h2>Доступные опросы</h2>
-        <div id="polls-container" class="polls-grid">
-
-        </div>
+        <div id="polls-container" class="polls-grid"></div>
     </section>
-
 </main>
 
-
-
-
+<script src="/js/auth.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/hh.js"></script>
+<script src="/js/jwt-decode.min.js"></script>
 </body>
 </html>

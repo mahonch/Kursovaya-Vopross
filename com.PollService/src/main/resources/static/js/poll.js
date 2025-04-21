@@ -55,18 +55,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const statistics = await response.json();
             const statsDiv = document.getElementById('statistics');
-            statsDiv.innerHTML = '<h2 class="text-xl font-bold mb-2">Statistics</h2>';
+            statsDiv.innerHTML = '<h2 class="text-xl font-bold mb-2">Результаты</h2>';
+
             statistics.forEach(stat => {
                 const statDiv = document.createElement('div');
                 statDiv.className = 'mb-4';
+
+                // Вычисляем общее количество голосов для текущего вопроса
+                const totalVotes = Object.values(stat.answerStatistics).reduce((sum, count) => sum + count, 0);
+
                 statDiv.innerHTML = `<h3 class="text-lg font-semibold">${stat.questionText}</h3>`;
+                const answersContainer = document.createElement('div');
+                answersContainer.className = 'answers-stats';
+
                 Object.entries(stat.answerStatistics).forEach(([answer, count]) => {
+                    // Вычисляем процент
+                    const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
+
                     const answerDiv = document.createElement('div');
-                    answerDiv.textContent = `${answer}: ${count} votes`;
-                    statDiv.appendChild(answerDiv);
+                    answerDiv.className = 'answer-stat';
+
+                    answerDiv.innerHTML = `
+                        <div class="answer-label">${answer}: ${count} голосов (${percentage}%)</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;" data-percentage="${percentage}"></div>
+                        </div>
+                    `;
+                    answersContainer.appendChild(answerDiv);
                 });
+
+                statDiv.appendChild(answersContainer);
                 statsDiv.appendChild(statDiv);
             });
+
+            // Анимация заполнения прогресс-баров
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(bar => {
+                    const percentage = bar.getAttribute('data-percentage');
+                    bar.style.width = `${percentage}%`;
+                });
+            }, 100);
         } catch (error) {
             console.error('Error fetching statistics:', error);
             alert('Не удалось загрузить статистику: ' + error.message);
