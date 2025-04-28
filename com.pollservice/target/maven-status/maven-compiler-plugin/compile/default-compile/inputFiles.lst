@@ -20,6 +20,7 @@ C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\p
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Question.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\YouTubeController.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\PollController.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\tests\PollServiceIntegrationTest.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\exception\GlobalExceptionHandler.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\RefreshToken.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\JwtFilter.java
@@ -36,6 +37,7 @@ C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\p
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\AnswerRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\repository\CommentRepository.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\controller\AdminController.java
+C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\config\CustomErrorController.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\dto\UserRegistrationDto.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Poll.java
 C:\Users\maxim\Desktop\git\Kursovaya-Vopross\com.PollService\src\main\java\com\pollservice\model\Role.java

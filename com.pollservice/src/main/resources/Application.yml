@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:sqlite:./poll.db
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:./poll.db}
     driver-class-name: org.sqlite.JDBC
     hikari:
       maximum-pool-size: 1
@@ -16,12 +16,13 @@ spring:
       cache:
         period: 0
   jpa:
-    show-sql:   true
+    show-sql: true
     hibernate:
       ddl-auto: update
+    open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.community.dialect.SQLiteDialect
+        dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.community.dialect.SQLiteDialect}
   logging:
     level:
       org:
@@ -30,7 +31,7 @@ spring:
           web: DEBUG
           jdbc:
             datasource:
-              init: DEBUG  # Включить логирование инициализации БД
+              init: DEBUG
         hibernate:
           SQL: DEBUG
           type:
@@ -47,6 +48,6 @@ spring:
       write-dates-as-timestamps: false
 
 jwt:
-  secret: zPdSgVkYp3s6v9y$B&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(
-  expiration: 3600000         # 1 час = 60*60*1000 мс
-  refreshExpiration: 604800000  # 7 дней = 7*24*60*60*1000 мс
+  secret: ${JWT_SECRET:zPdSgVkYp3s6v9y$B&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(}
+  expiration: ${JWT_EXPIRATION:3600000}
+  refreshExpiration: ${JWT_REFRESHEXPIRATION:604800000}

@@ -13,9 +13,5 @@ public class SpaForwardingController {
         return "redirect:/poll.html?id=" + id;
     }
 
-    @GetMapping(value = {"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
-    public String redirect() {
-        System.out.println("Redirecting SPA path to /auth.html");
-        return "forward:/auth.html";
-    }
+
 }

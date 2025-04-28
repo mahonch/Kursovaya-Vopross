@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,6 +29,16 @@ public class SecurityConfig {
         this.jwtUtils = jwtUtils;
         this.userService = userService;
     }
+    @Bean
+    public StrictHttpFirewall strictHttpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowSemicolon(true);
+        firewall.setAllowUrlEncodedPercent(true);
+        firewall.setAllowUrlEncodedSlash(true);
+        firewall.setAllowBackSlash(true);
+        firewall.setAllowUrlEncodedPeriod(true);
+        return firewall;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,35 +49,28 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Разрешаем все статические ресурсы
+                        // Разрешаем статические ресурсы и публичные страницы
                         .requestMatchers(
                                 "/",
                                 "/auth.html",
-                                "/admin.html",
-                                "/uploads/**",
                                 "/main.html",
                                 "/poll.html",
-                                "/poll/**",
+                                "/admin.html",
                                 "/profile.html",
+                                "/uploads/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/favicon.ico",
                                 "/error",
-                                "/error/**",
-                                "/static/**"
+                                "/error/**"
                         ).permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                         // Разрешаем эндпоинты аутентификации
                         .requestMatchers("/api/auth/**").permitAll()
-
                         // Разрешаем публичные API
                         .requestMatchers(HttpMethod.GET, "/api/youtube/**").permitAll()
-
                         // Админские эндпоинты
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                         // Все остальные запросы требуют аутентификации
                         .anyRequest().authenticated()
                 )
@@ -99,10 +103,19 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(
-                "/auth.html", "/css/**", "/js/**", "/images/**", "/favicon.ico"
+                "/auth.html",
+                "/main.html",
+                "/poll.html",
+                "/admin.html",
+                "/profile.html",
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/favicon.ico"
         );
     }
 }

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./poll.db:/app/poll.db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/poll.db
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.community.dialect.SQLiteDialect
+      - JWT_SECRET=zPdSgVkYp3s6v9y$B&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(
+      - JWT_EXPIRATION=3600000
+      - JWT_REFRESHEXPIRATION=604800000
+    networks:
+      - poll-network
+
+  db:
+    image: nouchka/sqlite3
+    volumes:
+      - ./poll.db:/app/poll.db
+    networks:
+      - poll-network
+
+
+networks:
+  poll-network:
+    driver: bridge

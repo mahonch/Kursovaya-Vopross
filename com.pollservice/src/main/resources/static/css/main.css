@@ -130,6 +130,8 @@ nav a:hover {
 .submit-btn {
     background: linear-gradient(135deg, var(--secondary-gradient-start) 0%, var(--secondary-gradient-end) 100%);
     color: white;
+    padding-left: 50%;
+    padding-right: 50%;
 }
 
 .submit-btn:hover {
